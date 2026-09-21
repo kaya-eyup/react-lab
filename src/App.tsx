@@ -1,7 +1,7 @@
-function App() {
+import { Day28 } from "./gun-28/Day28";
 
-  return <h1>React Lab</h1>;
-  
+function App() {
+  return <Day28 />;
 }
 
 export default App;
