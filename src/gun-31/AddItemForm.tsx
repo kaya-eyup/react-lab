@@ -1,10 +1,10 @@
 import { useState, type ChangeEvent, type SubmitEvent } from "react";
 
-interface ItemFormProps {
+interface AddItemFormProps {
   onAdd: (name: string) => void;
 }
 
-export function ItemForm({ onAdd }: ItemFormProps) {
+export function AddItemForm({ onAdd }: AddItemFormProps) {
   const [text, setText] = useState("");
 
   function handleChange(e: ChangeEvent<HTMLInputElement>) {
@@ -16,8 +16,8 @@ export function ItemForm({ onAdd }: ItemFormProps) {
     const name = text.trim();
     if (!name) return;
 
-    onAdd(name); // Yukarıya, App bileşenine haber veriyoruz
-    setText(""); // Formu sıfırla
+    onAdd(name);
+    setText("");
   }
 
   return (

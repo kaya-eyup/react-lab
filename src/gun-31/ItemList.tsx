@@ -1,10 +1,13 @@
-import type { Item } from "./types"; 
+import type { Item } from "./types";
+import { ShoppingItem } from "./ShoppingItem";
 
 interface ItemListProps {
-  items: Item[];
+  items: readonly Item[];
+  onToggle: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
-export function ItemList({ items }: ItemListProps) {
+export function ItemList({ items, onToggle, onDelete }: ItemListProps) {
   if (items.length === 0) {
     return <p>Henüz listede eleman yok.</p>;
   }
@@ -12,7 +15,12 @@ export function ItemList({ items }: ItemListProps) {
   return (
     <ul>
       {items.map((item) => (
-        <li key={item.id}>{item.name}</li>
+        <ShoppingItem
+          key={item.id} 
+          item={item}
+          onToggle={onToggle}
+          onDelete={onDelete}
+        />
       ))}
     </ul>
   );

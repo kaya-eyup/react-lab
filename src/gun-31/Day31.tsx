@@ -1,7 +1,7 @@
 // App.tsx
 import { useState } from "react";
 import type { Item } from "./types";
-import { ItemForm } from "./AddItemForm";
+import { AddItemForm } from "./AddItemForm";
 import { ItemList } from "./ItemList";
 
 export function Day31() {
@@ -11,21 +11,29 @@ export function Day31() {
     const newItem: Item = {
       id: crypto.randomUUID(),
       name,
+      completed: false,
     };
     setItems((prev) => [...prev, newItem]);
+  }
+  function handleToggle(id: string) {
+    setItems((prev) =>
+      prev.map((item) => (item.id === id ? { ...item, completed: !item.completed } : item)),
+    );
+  }
+  function handleDelete(id: string) {
+    setItems((prev) => prev.filter((item) => item.id !== id));
   }
 
   return (
     <main style={{ padding: "20px" }}>
       <h1>Alışveriş Listesi</h1>
-      <ItemForm onAdd={handleAddItem} />
-      <ItemList items={items} />
+      <AddItemForm onAdd={handleAddItem} />
+      <ItemList items={items} onToggle={handleToggle} onDelete={handleDelete} />
     </main>
   );
 }
 
 // kardeşten kardeşe yatay köprü yoktur, birşey kabul etmemeli. düzeltmek için parentta tanımlayalım stateyi.
-
 
 //ItemForm (Child 1) ebeveyne veri bildirir: "Kullanıcı 'Süt' yazıp ekleye bastı!"
 
