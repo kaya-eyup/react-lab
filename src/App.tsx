@@ -1,7 +1,7 @@
-import { Day31 } from "./gun-31/Day31";
+import { Day32 } from "./gun-32/Day32";
 
 function App() {
-  return <Day31 />;
+  return <Day32 />;
 }
 
 export default App;
