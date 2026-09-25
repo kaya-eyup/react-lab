@@ -1,10 +1,12 @@
 import { useState } from "react";
 import type { Item } from "./types";
 import type { Filter } from "./filters";
+import { FILTER_LABELS } from "./filters";
 import { AddItemForm } from "./AddItemForm";
 import { ItemList } from "./ItemList";
 import { Header } from "./Header";
 import { FilterBar } from "./FilterBar";
+import { Panel } from "./Panel";
 
 export function Day32() {
   // 1) STATE: sadece hesaplanamayan şeyler
@@ -57,16 +59,18 @@ export function Day32() {
   return (
     <main>
       <Header total={items.length} completed={completedCount} />
-      <AddItemForm onAdd={handleAddItem} />
+      <Panel title="Yeni ürün">
+        <AddItemForm onAdd={handleAddItem} />
+      </Panel>
       <FilterBar filter={filter} onFilterChange={setFilter} />
-
-      <ItemList
-        items={visibleItems}
-        emptyMessage={emptyMessage}
-        onToggle={handleToggle}
-        onDelete={handleDelete}
-      />
-
+      <Panel title={FILTER_LABELS[filter]}>
+        <ItemList
+          items={visibleItems}
+          emptyMessage={emptyMessage}
+          onToggle={handleToggle}
+          onDelete={handleDelete}
+        />
+      </Panel>
       <button
         onClick={handleClearCompleted}
         disabled={completedCount === 0}
