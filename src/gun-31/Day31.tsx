@@ -1,9 +1,8 @@
-// App.tsx
 import { useState } from "react";
 import type { Item } from "./types";
 import { AddItemForm } from "./AddItemForm";
 import { ItemList } from "./ItemList";
-
+import { Header } from "./Header";
 export function Day31() {
   const [items, setItems] = useState<Item[]>([]);
 
@@ -26,7 +25,7 @@ export function Day31() {
 
   return (
     <main style={{ padding: "20px" }}>
-      <h1>Alışveriş Listesi</h1>
+      <Header/>
       <AddItemForm onAdd={handleAddItem} />
       <ItemList items={items} onToggle={handleToggle} onDelete={handleDelete} />
     </main>
