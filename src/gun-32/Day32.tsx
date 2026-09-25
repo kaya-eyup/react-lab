@@ -1,5 +1,6 @@
 import { useState } from "react";
-import type { Item, Filter } from "./types";
+import type { Item } from "./types";
+import type { Filter } from "./filters";
 import { AddItemForm } from "./AddItemForm";
 import { ItemList } from "./ItemList";
 import { Header } from "./Header";
@@ -12,16 +13,23 @@ export function Day32() {
 
   // 2) TÜRETİLENLER: her render'da state'ten hesaplanır, state'e konmaz
   const visibleItems = items.filter((item) => {
-    if (filter === "completed") return item.completed;
-    if (filter === "incomplete") return !item.completed;
-    return true;
+    switch (filter) {
+      case "all":
+        return true;
+      case "completed":
+        return item.completed;
+      case "incomplete":
+        return !item.completed;
+      default:
+        return assertNever(filter);
+    }
   });
   const completedCount = items.filter((item) => item.completed).length;
   const emptyMessage =
     items.length === 0
       ? "Listede henüz ürün yok."
       : "Bu filtreye uyan ürün yok.";
-  // 3) HANDLER'LAR: handleAddItem, handleToggle, handleDelete (dünden)
+  // 3) HANDLER'LAR
 
   function handleAddItem(name: string) {
     const newItem: Item = {
@@ -41,9 +49,7 @@ export function Day32() {
   function handleDelete(id: string) {
     setItems((prev) => prev.filter((item) => item.id !== id));
   }
-  //    + handleClearCompleted (yeni)
   function handleClearCompleted() {
-    // Sadece "completed: false" olanları (tamamlanmamışları) bırakıyoruz
     setItems((prev) => prev.filter((item) => !item.completed));
   }
 
@@ -54,7 +60,6 @@ export function Day32() {
       <AddItemForm onAdd={handleAddItem} />
       <FilterBar filter={filter} onFilterChange={setFilter} />
 
-      {/* ItemList'e items yerine visibleItems veriyoruz */}
       <ItemList
         items={visibleItems}
         emptyMessage={emptyMessage}
@@ -62,7 +67,6 @@ export function Day32() {
         onDelete={handleDelete}
       />
 
-      {/* Adım 3.5: disabled mantığıyla buton */}
       <button
         onClick={handleClearCompleted}
         disabled={completedCount === 0}
@@ -73,4 +77,7 @@ export function Day32() {
       </button>
     </main>
   );
+}
+function assertNever(x: never): never {
+  throw new Error(`Karşılanmamış filtre durumu: ${JSON.stringify(x)}`);
 }
