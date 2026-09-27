@@ -18,7 +18,7 @@ export async function getProducts(
   signal: AbortSignal,
 ): Promise<Product[]> {
   if (import.meta.env.DEV) {
-    await new Promise((resolve) => setTimeout(resolve, 700));
+    await sleep(700, signal);
   }
 
   // query parametresini URL'ye güvenli bir şekilde enjekte ediyoruz
@@ -38,4 +38,18 @@ export async function getProducts(
   const parsedData = responseSchema.parse(rawData);
 
   return parsedData.products;
+}
+function sleep(ms: number, signal: AbortSignal): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (signal.aborted) return reject(signal.reason);
+    const id = setTimeout(resolve, ms);
+    signal.addEventListener(
+      "abort",
+      () => {
+        clearTimeout(id);
+        reject(signal.reason);
+      },
+      { once: true },
+    );
+  });
 }
