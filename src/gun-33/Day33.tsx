@@ -5,41 +5,79 @@ import type { Product } from "./api";
 
 export function Day33() {
   const [state, setState] = useState<FetchState<Product[]>>({ status: "idle" });
+  const [query, setQuery] = useState("");
+
+  const view: FetchState<Product[]> =
+    query.trim() === "" ? { status: "idle" } : state;
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setQuery(value);
+
+    if (value.trim() !== "") {
+      setState((prev) => ({
+        status: "loading",
+        previous:
+          prev.status === "success"
+            ? prev.data
+            : prev.status === "loading"
+              ? prev.previous
+              : null,
+      }));
+    }
+  };
 
   useEffect(() => {
-    console.log("effect run");
+    // query boşsa hiçbir yere istek atma
+    if (query.trim() === "") return;
 
+    console.log(`"${query}" için effect run`);
     const controller = new AbortController();
 
-    const fetchInitial = async () => {
-      setState({ status: "loading", previous: null });
+    const loadProducts = async () => {
       try {
-        const data = await getProducts("phone", controller.signal);
+        const data = await getProducts(query, controller.signal);
+        if (controller.signal.aborted) return;
+
         setState({ status: "success", data });
       } catch (err: unknown) {
-        // Hata ne olursa olsun (404, 500 veya ağ kesintisi) state güncellenir, sonsuz loading biter.
+        if (err instanceof Error && err.name === "AbortError") {
+          console.log(`İptal edildi: "${query}"`);
+          return;
+        }
+
         const message = err instanceof Error ? err.message : "Bilinmeyen hata";
         setState({ status: "error", message });
       }
     };
 
-    fetchInitial();
+    loadProducts();
 
     return () => {
       console.log("cleanup");
+      controller.abort();
     };
-  }, []);
+  }, [query]);
 
   return (
     <div>
       <h1>Gün 33 - Arama</h1>
+
+      <input
+        type="text"
+        value={query}
+        onChange={handleSearch}
+        placeholder="Ürün ara (Örn: phone)..."
+        style={{ marginBottom: "1rem", padding: "0.5rem" }}
+      />
+
       <p>
-        Şu anki durum: <strong>{state.status}</strong>
+        Şu anki durum: <strong>{view.status}</strong>
       </p>
 
-      {state.status === "success" && (
+      {view.status === "success" && (
         <ul>
-          {state.data.map((p) => (
+          {view.data.map((p) => (
             <li key={p.id}>
               {p.title} - ${p.price}
             </li>
