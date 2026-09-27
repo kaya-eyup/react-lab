@@ -2,7 +2,7 @@ export type FetchState<T> =
   | { status: "idle" }
   | { status: "loading"; previous: T | null }
   | { status: "success"; data: T }
-  | { status: "error"; message: HttpError };
+  | { status: "error"; message: string };
 
 export class HttpError extends Error {
   readonly status: number;
